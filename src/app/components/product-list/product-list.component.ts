@@ -509,7 +509,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   searchTerm: string = '';
   isLoading: boolean = true;
 
-  
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -589,9 +589,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   // Actions
   createProduct(): void {
-    console.log('Create product clicked');
-    // TODO: Implementar navegación a formulario de creación
-    alert('Funcionalidad de crear producto - Próximamente');
+    console.log('Navigate to create product form');
+    this.router.navigate(['/products/create']);
   }
 
   viewProduct(product: Product): void {
