@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { ProductService, Product } from '../../services/product.service';
 
@@ -509,11 +509,13 @@ export class ProductListComponent implements OnInit, OnDestroy {
   searchTerm: string = '';
   isLoading: boolean = true;
 
+  
   private destroy$ = new Subject<void>();
 
-  constructor(private productService: ProductService) {}
-
-  ngOnInit(): void {
+  constructor(
+    private productService: ProductService,
+    private router: Router
+  ) {}  ngOnInit(): void {
     this.loadProducts();
   }
 
@@ -594,8 +596,11 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   viewProduct(product: Product): void {
     console.log('View product:', product);
-    // TODO: Implementar vista de detalles
-    alert(`Ver detalles de: ${product.name}`);
+    // Abrir en nueva pestaña
+    const url = this.router.serializeUrl(
+      this.router.createUrlTree(['/product', product.id])
+    );
+    window.open(url, '_blank');
   }
 
   editProduct(product: Product): void {
