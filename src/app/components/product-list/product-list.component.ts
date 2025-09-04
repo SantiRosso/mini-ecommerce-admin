@@ -603,9 +603,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   editProduct(product: Product): void {
-    console.log('Edit product:', product);
-    // TODO: Implementar formulario de edición
-    alert(`Editar producto: ${product.name}`);
+    console.log('Navigate to edit product:', product);
+    this.router.navigate(['/products/edit', product.id]);
   }
 
   deleteProduct(product: Product): void {
