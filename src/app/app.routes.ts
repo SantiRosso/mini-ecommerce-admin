@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
+import { ProductListComponent } from './components/product-list/product-list.component';
 import { ProductDetailComponent } from './components/product-detail/product-detail.component';
 import { ProductCreateComponent } from './components/product-create/product-create.component';
 import { ProductEditComponent } from './components/product-edit/product-edit.component';
@@ -11,7 +12,7 @@ export const routes: Routes = [
   },
   {
     path: 'products',
-    component: HomeComponent
+    component: ProductListComponent
   },
   {
     path: 'products/create',
@@ -24,6 +25,11 @@ export const routes: Routes = [
   {
     path: 'product/:id',
     component: ProductDetailComponent
+  },
+  {
+    path: 'users',
+    redirectTo: '',
+    pathMatch: 'full'
   },
   {
     path: '**',
