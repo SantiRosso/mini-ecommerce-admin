@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { ProductService, Product } from '../services/product.service';
+import { UserService, User } from '../services/user.service';
 
 @Component({
   selector: 'app-home',
@@ -71,9 +72,9 @@ import { ProductService, Product } from '../services/product.service';
           <div class="stat-card users">
             <div class="stat-icon">👥</div>
             <div class="stat-content">
-              <h3 class="stat-number">-</h3>
+              <h3 class="stat-number">{{ totalUsers }}</h3>
               <p class="stat-label">Usuarios</p>
-              <span class="stat-link disabled">Próximamente</span>
+              <a routerLink="/users" class="stat-link">Ver todos →</a>
             </div>
           </div>
         </div>
@@ -105,14 +106,13 @@ import { ProductService, Product } from '../services/product.service';
             <div class="action-arrow">→</div>
           </div>
 
-          <div class="action-card disabled">
+          <div class="action-card" routerLink="/users">
             <div class="action-icon">👥</div>
             <div class="action-content">
               <h3>Gestionar Usuarios</h3>
               <p>Administrar cuentas y permisos de usuario</p>
             </div>
             <div class="action-arrow">→</div>
-            <div class="coming-soon-badge">Próximamente</div>
           </div>
 
           <div class="action-card disabled">
@@ -312,7 +312,6 @@ import { ProductService, Product } from '../services/product.service';
 
     .stat-card.users {
       border-left: 6px solid #8b5cf6;
-      opacity: 0.6;
     }
 
     .stat-icon {
@@ -560,14 +559,19 @@ import { ProductService, Product } from '../services/product.service';
 })
 export class HomeComponent implements OnInit, OnDestroy {
   products: Product[] = [];
+  users: User[] = [];
   totalProducts: number = 0;
+  totalUsers: number = 0;
   totalValue: number = 0;
   averagePrice: number = 0;
   recentProducts: Product[] = [];
 
   private destroy$ = new Subject<void>();
 
-  constructor(private productService: ProductService) {}
+  constructor(
+    private productService: ProductService,
+    private userService: UserService
+  ) {}
 
   ngOnInit(): void {
     this.loadDashboardData();
@@ -585,6 +589,13 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.products = products;
         this.calculateStats();
         this.getRecentProducts();
+      });
+
+    this.userService.users$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(users => {
+        this.users = users;
+        this.totalUsers = users.length;
       });
   }
 

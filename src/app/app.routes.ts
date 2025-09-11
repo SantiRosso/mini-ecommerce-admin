@@ -4,6 +4,7 @@ import { ProductListComponent } from './components/product-list/product-list.com
 import { ProductDetailComponent } from './components/product-detail/product-detail.component';
 import { ProductCreateComponent } from './components/product-create/product-create.component';
 import { ProductEditComponent } from './components/product-edit/product-edit.component';
+import { UserListComponent } from './components/user-list/user-list.component';
 
 export const routes: Routes = [
   {
@@ -28,8 +29,7 @@ export const routes: Routes = [
   },
   {
     path: 'users',
-    redirectTo: '',
-    pathMatch: 'full'
+    component: UserListComponent
   },
   {
     path: '**',

@@ -407,8 +407,7 @@ export class LeftSidebarComponent implements OnInit {
       path: '/users',
       label: 'Users',
       icon: '👥',
-      active: false,
-      disabled: true
+      active: false
     }
   ];
 
