@@ -143,7 +143,7 @@ import { ProductService, Product } from '../../services/product.service';
                   <span class="description">Modificar información del producto</span>
                 </div>
               </button>
-              
+
               <button class="action-btn duplicate" (click)="duplicateProduct()">
                 <span class="icon">📋</span>
                 <div class="action-text">
@@ -151,7 +151,7 @@ import { ProductService, Product } from '../../services/product.service';
                   <span class="description">Crear una copia de este producto</span>
                 </div>
               </button>
-              
+
               <button class="action-btn delete" (click)="deleteProduct()">
                 <span class="icon">🗑️</span>
                 <div class="action-text">
@@ -171,7 +171,7 @@ import { ProductService, Product } from '../../services/product.service';
             <div class="spinner"></div>
             <p>Cargando producto...</p>
           </div>
-          
+
           <div class="error-state" *ngIf="!isLoading && !product">
             <div class="error-icon">❌</div>
             <h3>Producto no encontrado</h3>
@@ -532,7 +532,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   product: Product | null = null;
   isLoading: boolean = true;
   productId: number | null = null;
-  
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -562,7 +562,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
 
   private loadProduct(id: number): void {
     this.isLoading = true;
-    
+
     this.productService.getProductById(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -580,7 +580,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
 
   formatDateTime(dateString?: string): string {
     if (!dateString) return 'N/A';
-    
+
     try {
       const date = new Date(dateString);
       return date.toLocaleString('es-ES', {
@@ -597,7 +597,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
 
   getDaysFromCreation(): number {
     if (!this.product?.createdAt) return 0;
-    
+
     try {
       const createdDate = new Date(this.product.createdAt);
       const now = new Date();
@@ -617,8 +617,8 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   // Action methods
   editProduct(): void {
     if (this.product) {
-      console.log('Edit product:', this.product);
-      alert(`Editar producto: ${this.product.name} - Funcionalidad próximamente`);
+      console.log('Navigate to edit product:', this.product);
+      this.router.navigate(['/products/edit', this.product.id]);
     }
   }
 
@@ -635,7 +635,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     const confirmDelete = confirm(
       `¿Estás seguro de que quieres eliminar "${this.product.name}"?\n\nEsta acción no se puede deshacer.`
     );
-    
+
     if (confirmDelete) {
       this.productService.deleteProduct(this.product.id)
         .pipe(takeUntil(this.destroy$))
