@@ -589,21 +589,14 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   // Actions
   createProduct(): void {
-    console.log('Navigate to create product form');
     this.router.navigate(['/products/create']);
   }
 
   viewProduct(product: Product): void {
-    console.log('View product:', product);
-    // Abrir en nueva pestaña
-    const url = this.router.serializeUrl(
-      this.router.createUrlTree(['/product', product.id])
-    );
-    window.open(url, '_blank');
+    this.router.navigate(['/product', product.id])
   }
 
   editProduct(product: Product): void {
-    console.log('Navigate to edit product:', product);
     this.router.navigate(['/products/edit', product.id]);
   }
 
