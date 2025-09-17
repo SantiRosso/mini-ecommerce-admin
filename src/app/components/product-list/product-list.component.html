@@ -1,0 +1,177 @@
+<div class="product-list-container">
+  <!-- Header -->
+  <div class="list-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <span class="icon">📦</span>
+        Gestión de Productos
+      </h1>
+      <p class="page-subtitle">Administra el inventario de tu tienda</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-primary" (click)="refreshProducts()">
+        <span class="icon">🔄</span>
+        Actualizar
+      </button>
+      <button class="btn-success" (click)="createProduct()">
+        <span class="icon">➕</span>
+        Nuevo Producto
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">📊</div>
+      <div class="stat-content">
+        <h3>{{ products.length }}</h3>
+        <p>Total Productos</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">💰</div>
+      <div class="stat-content">
+        <h3>${{ getTotalValue() | number:'1.2-2' }}</h3>
+        <p>Valor Total</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">📈</div>
+      <div class="stat-content">
+        <h3>${{ getAveragePrice() | number:'1.2-2' }}</h3>
+        <p>Precio Promedio</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🏆</div>
+      <div class="stat-content">
+        <h3>{{ getMostExpensiveProduct()?.name || 'N/A' }}</h3>
+        <p>Más Caro</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="search-section">
+    <div class="search-container">
+      <div class="search-input-group">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          placeholder="Buscar productos por nombre..."
+          [(ngModel)]="searchTerm"
+          (input)="filterProducts()"
+          class="search-input">
+      </div>
+
+      <div class="filter-group">
+        <select [(ngModel)]="selectedSort" (change)="filterProducts()" class="filter-select">
+          <option value="">Ordenar por...</option>
+          <option value="name-asc">Nombre A-Z</option>
+          <option value="name-desc">Nombre Z-A</option>
+          <option value="price-asc">Precio menor a mayor</option>
+          <option value="price-desc">Precio mayor a menor</option>
+          <option value="newest">Más reciente</option>
+        </select>
+
+        <select [(ngModel)]="selectedPriceRange" (change)="filterProducts()" class="filter-select">
+          <option value="">Todos los precios</option>
+          <option value="0-50">$0 - $50</option>
+          <option value="50-100">$50 - $100</option>
+          <option value="100-200">$100 - $200</option>
+          <option value="200+">$200+</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="results-info">
+      <span class="results-count">{{ filteredProducts.length }} de {{ products.length }} productos</span>
+      <button class="btn-clear" (click)="clearFilters()" *ngIf="hasActiveFilters()">
+        <span class="icon">✖️</span>
+        Limpiar filtros
+      </button>
+    </div>
+  </div>
+
+  <!-- Products Table -->
+  <div class="table-container">
+    <div class="table-wrapper">
+      <table class="products-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Producto</th>
+            <th>Precio</th>
+            <th>Fecha Creación</th>
+            <th>Última Actualización</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of filteredProducts; trackBy: trackByProductId">
+            <td class="id-cell">
+              <span class="product-id">#{{ product.id }}</span>
+            </td>
+            <td class="product-cell">
+              <div class="product-info">
+                <div class="product-icon">📦</div>
+                <div class="product-details">
+                  <span class="name">{{ product.name }}</span>
+                </div>
+              </div>
+            </td>
+            <td class="price-cell">
+              <span class="price">${{ product.price | number:'1.2-2' }}</span>
+            </td>
+            <td class="date-cell">
+              <span class="date">{{ formatDate(product.createdAt) }}</span>
+            </td>
+            <td class="date-cell">
+              <span class="date">{{ formatDate(product.updatedAt) }}</span>
+            </td>
+            <td class="actions-cell">
+              <div class="actions-group">
+                <button
+                  class="action-btn view-btn"
+                  (click)="viewProduct(product)"
+                  title="Ver detalles">
+                  <span class="icon">👁️</span>
+                </button>
+                <button
+                  class="action-btn edit-btn"
+                  (click)="editProduct(product)"
+                  title="Editar producto">
+                  <span class="icon">✏️</span>
+                </button>
+                <button
+                  class="action-btn duplicate-btn"
+                  (click)="duplicateProduct(product)"
+                  title="Duplicar producto">
+                  <span class="icon">📋</span>
+                </button>
+                <button
+                  class="action-btn delete-btn"
+                  (click)="deleteProduct(product)"
+                  title="Eliminar producto">
+                  <span class="icon">🗑️</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="filteredProducts.length === 0">
+      <div class="empty-icon">📦</div>
+      <h3>No se encontraron productos</h3>
+      <p>{{ products.length === 0 ? 'No hay productos en el inventario.' : 'Intenta ajustar los filtros de búsqueda.' }}</p>
+      <button class="btn-primary" (click)="createProduct()" *ngIf="products.length === 0">
+        <span class="icon">➕</span>
+        Crear Primer Producto
+      </button>
+    </div>
+  </div>
+</div>
