@@ -1,0 +1,192 @@
+<div class="product-create-container">
+  <!-- Header -->
+  <div class="create-header">
+    <nav class="breadcrumbs">
+      <a routerLink="/" class="breadcrumb-link">
+        <span class="icon">🏠</span>
+        Dashboard
+      </a>
+      <span class="breadcrumb-separator">/</span>
+      <a routerLink="/products" class="breadcrumb-link">
+        <span class="icon">📦</span>
+        Productos
+      </a>
+      <span class="breadcrumb-separator">/</span>
+      <span class="breadcrumb-current">Crear Producto</span>
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-secondary" (click)="goBack()">
+        <span class="icon">←</span>
+        Cancelar
+      </button>
+    </div>
+  </div>
+
+  <!-- Formulario Principal -->
+  <div class="form-container">
+    <div class="form-card">
+      <div class="card-header">
+        <h1 class="form-title">
+          <span class="icon">➕</span>
+          Crear Nuevo Producto
+        </h1>
+        <p class="form-subtitle">Complete la información del producto que desea agregar al inventario</p>
+      </div>
+
+      <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="product-form">
+        <!-- Información Básica -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <span class="icon">ℹ️</span>
+            Información Básica
+          </h3>
+
+          <!-- Nombre del Producto -->
+          <div class="form-group">
+            <label for="name" class="form-label">
+              Nombre del Producto *
+            </label>
+            <input
+              type="text"
+              id="name"
+              formControlName="name"
+              class="form-input"
+              [class.error]="isFieldInvalid('name')"
+              placeholder="Ej: iPhone 15 Pro Max"
+              maxlength="100">
+
+            <div class="field-info">
+              <span class="char-count">{{ getFieldValue('name')?.length || 0 }}/100 caracteres</span>
+            </div>
+
+            <div class="error-message" *ngIf="isFieldInvalid('name')">
+              <span class="error-icon">⚠️</span>
+              <span *ngIf="productForm.get('name')?.errors?.['required']">
+                El nombre del producto es obligatorio
+              </span>
+              <span *ngIf="productForm.get('name')?.errors?.['minlength']">
+                El nombre debe tener al menos 2 caracteres
+              </span>
+              <span *ngIf="productForm.get('name')?.errors?.['maxlength']">
+                El nombre no puede exceder los 100 caracteres
+              </span>
+            </div>
+          </div>
+
+          <!-- Precio -->
+          <div class="form-group">
+            <label for="price" class="form-label">
+              Precio *
+            </label>
+            <div class="price-input-container">
+              <span class="currency-symbol">$</span>
+              <input
+                type="number"
+                id="price"
+                formControlName="price"
+                class="form-input price-input"
+                [class.error]="isFieldInvalid('price')"
+                placeholder="0.00"
+                min="0"
+                step="0.01">
+            </div>
+
+            <div class="field-info">
+              <span class="price-preview" *ngIf="getFieldValue('price')">
+                Precio: ${{ formatPrice(getFieldValue('price')) }}
+              </span>
+            </div>
+
+            <div class="error-message" *ngIf="isFieldInvalid('price')">
+              <span class="error-icon">⚠️</span>
+              <span *ngIf="productForm.get('price')?.errors?.['required']">
+                El precio es obligatorio
+              </span>
+              <span *ngIf="productForm.get('price')?.errors?.['min']">
+                El precio debe ser mayor a $0
+              </span>
+              <span *ngIf="productForm.get('price')?.errors?.['max']">
+                El precio no puede exceder $999,999.99
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preview del Producto -->
+        <div class="form-section" *ngIf="productForm.get('name')?.value || productForm.get('price')?.value">
+          <h3 class="section-title">
+            <span class="icon">👀</span>
+            Vista Previa
+          </h3>
+
+          <div class="product-preview">
+            <div class="preview-card">
+              <div class="preview-icon">📦</div>
+              <div class="preview-content">
+                <h4 class="preview-name">
+                  {{ getFieldValue('name') || 'Nombre del producto' }}
+                </h4>
+                <div class="preview-price">
+                  ${{ formatPrice(getFieldValue('price') || 0) }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="form-actions">
+          <button
+            type="button"
+            class="btn-secondary"
+            (click)="resetForm()"
+            [disabled]="isSubmitting">
+            <span class="icon">🔄</span>
+            Limpiar Formulario
+          </button>
+
+          <button
+            type="submit"
+            class="btn-primary"
+            [disabled]="productForm.invalid || isSubmitting">
+            <span class="icon" *ngIf="!isSubmitting">✅</span>
+            <span class="spinner" *ngIf="isSubmitting"></span>
+            {{ isSubmitting ? 'Creando...' : 'Crear Producto' }}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Panel de Ayuda -->
+    <div class="help-panel">
+      <h3 class="help-title">
+        <span class="icon">💡</span>
+        Consejos para crear productos
+      </h3>
+
+      <div class="help-content">
+        <div class="help-tip">
+          <span class="tip-icon">📝</span>
+          <div class="tip-text">
+            <strong>Nombre descriptivo:</strong> Use nombres claros y específicos que ayuden a identificar el producto fácilmente.
+          </div>
+        </div>
+
+        <div class="help-tip">
+          <span class="tip-icon">💰</span>
+          <div class="tip-text">
+            <strong>Precio competitivo:</strong> Asegúrese de establecer un precio acorde al mercado y a la calidad del producto.
+          </div>
+        </div>
+
+        <div class="help-tip">
+          <span class="tip-icon">🎯</span>
+          <div class="tip-text">
+            <strong>Información completa:</strong> Complete todos los campos obligatorios para una mejor experiencia del usuario.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
