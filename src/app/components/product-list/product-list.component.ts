@@ -16,6 +16,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
   products: Product[] = [];
   filteredProducts: Product[] = [];
   searchTerm: string = '';
+  selectedSort: string = '';
+  selectedPriceRange: string = '';
   isLoading: boolean = true;
 
   private destroy$ = new Subject<void>();
@@ -49,16 +51,71 @@ export class ProductListComponent implements OnInit, OnDestroy {
     return this.getTotalValue() / this.products.length;
   }
 
+  getMostExpensiveProduct(): Product | undefined {
+    return this.products.reduce((max, product) =>
+      product.price > (max?.price || 0) ? product : max,
+      undefined as Product | undefined
+    );
+  }
+
   filterProducts(): void {
-    if (!this.searchTerm.trim()) {
-      this.filteredProducts = [...this.products];
-    } else {
+    let filtered = [...this.products];
+
+    // Filter by search term
+    if (this.searchTerm.trim()) {
       const term = this.searchTerm.toLowerCase().trim();
-      this.filteredProducts = this.products.filter(product =>
+      filtered = filtered.filter(product =>
         product.name.toLowerCase().includes(term) ||
         product.id.toString().includes(term)
       );
     }
+
+    // Filter by price range
+    if (this.selectedPriceRange) {
+      const [min, max] = this.selectedPriceRange.split('-').map(v => v.replace('+', ''));
+      filtered = filtered.filter(product => {
+        if (this.selectedPriceRange === '200+') {
+          return product.price >= 200;
+        }
+        return product.price >= parseFloat(min) && product.price <= parseFloat(max);
+      });
+    }
+
+    // Sort products
+    if (this.selectedSort) {
+      switch (this.selectedSort) {
+        case 'name-asc':
+          filtered.sort((a, b) => a.name.localeCompare(b.name));
+          break;
+        case 'name-desc':
+          filtered.sort((a, b) => b.name.localeCompare(a.name));
+          break;
+        case 'price-asc':
+          filtered.sort((a, b) => a.price - b.price);
+          break;
+        case 'price-desc':
+          filtered.sort((a, b) => b.price - a.price);
+          break;
+        case 'newest':
+          filtered.sort((a, b) =>
+            new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime()
+          );
+          break;
+      }
+    }
+
+    this.filteredProducts = filtered;
+  }
+
+  clearFilters(): void {
+    this.searchTerm = '';
+    this.selectedSort = '';
+    this.selectedPriceRange = '';
+    this.filterProducts();
+  }
+
+  hasActiveFilters(): boolean {
+    return !!(this.searchTerm || this.selectedSort || this.selectedPriceRange);
   }
 
   trackByProductId(index: number, product: Product): number {
@@ -93,6 +150,11 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   editProduct(product: Product): void {
     this.router.navigate(['/products/edit', product.id]);
+  }
+
+  duplicateProduct(product: Product): void {
+    console.log('Duplicate product:', product);
+    alert(`Duplicar producto: ${product.name} - Funcionalidad próximamente`);
   }
 
   deleteProduct(product: Product): void {
