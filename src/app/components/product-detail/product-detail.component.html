@@ -1,0 +1,175 @@
+<div class="product-detail-container">
+  <!-- Header con breadcrumbs -->
+  <div class="detail-header">
+    <nav class="breadcrumbs">
+      <a routerLink="/" class="breadcrumb-link">
+        <span class="icon">🏠</span>
+        Dashboard
+      </a>
+      <span class="breadcrumb-separator">/</span>
+      <a routerLink="/products" class="breadcrumb-link">
+        <span class="icon">📦</span>
+        Productos
+      </a>
+      <span class="breadcrumb-separator">/</span>
+      <span class="breadcrumb-current">Detalle</span>
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-secondary" (click)="goBack()">
+        <span class="icon">←</span>
+        Volver
+      </button>
+      <button class="btn-primary" (click)="editProduct()" *ngIf="product">
+        <span class="icon">✏️</span>
+        Editar
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="detail-content" *ngIf="!isLoading && product; else loadingOrErrorTemplate">
+    <!-- Card principal del producto -->
+    <div class="product-card">
+      <div class="card-header">
+        <div class="product-icon">📦</div>
+        <div class="product-status">
+          <span class="status-badge status-active">Activo</span>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <h1 class="product-title">{{ product.name }}</h1>
+        <div class="product-price">
+          <span class="currency">$</span>
+          <span class="amount">{{ product.price | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grid de información detallada -->
+    <div class="info-grid">
+      <!-- Información básica -->
+      <div class="info-card">
+        <h3 class="card-title">
+          <span class="icon">ℹ️</span>
+          Información Básica
+        </h3>
+        <div class="info-content">
+          <div class="info-row">
+            <span class="label">ID del Producto:</span>
+            <span class="value">#{{ product.id }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Nombre:</span>
+            <span class="value">{{ product.name }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Precio:</span>
+            <span class="value price">\${{ product.price | number:'1.2-2' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Información de fechas -->
+      <div class="info-card">
+        <h3 class="card-title">
+          <span class="icon">📅</span>
+          Fechas
+        </h3>
+        <div class="info-content">
+          <div class="info-row">
+            <span class="label">Fecha de Creación:</span>
+            <span class="value">{{ formatDateTime(product.createdAt) }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Última Actualización:</span>
+            <span class="value">{{ formatDateTime(product.updatedAt) }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Días desde creación:</span>
+            <span class="value">{{ getDaysFromCreation() }} días</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estadísticas -->
+      <div class="info-card">
+        <h3 class="card-title">
+          <span class="icon">📊</span>
+          Estadísticas
+        </h3>
+        <div class="info-content">
+          <div class="info-row">
+            <span class="label">Estado:</span>
+            <span class="value">
+              <span class="status-indicator active"></span>
+              Disponible
+            </span>
+          </div>
+          <div class="info-row">
+            <span class="label">Categoría:</span>
+            <span class="value">General</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Stock:</span>
+            <span class="value">Ilimitado</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Acciones disponibles -->
+      <div class="info-card">
+        <h3 class="card-title">
+          <span class="icon">⚡</span>
+          Acciones Disponibles
+        </h3>
+        <div class="actions-content">
+          <button class="action-btn edit" (click)="editProduct()">
+            <span class="icon">✏️</span>
+            <div class="action-text">
+              <span class="title">Editar Producto</span>
+              <span class="description">Modificar información del producto</span>
+            </div>
+          </button>
+
+          <button class="action-btn duplicate" (click)="duplicateProduct()">
+            <span class="icon">📋</span>
+            <div class="action-text">
+              <span class="title">Duplicar Producto</span>
+              <span class="description">Crear una copia de este producto</span>
+            </div>
+          </button>
+
+          <button class="action-btn delete" (click)="deleteProduct()">
+            <span class="icon">🗑️</span>
+            <div class="action-text">
+              <span class="title">Eliminar Producto</span>
+              <span class="description">Eliminar permanentemente</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Template para carga y errores -->
+  <ng-template #loadingOrErrorTemplate>
+    <div class="center-content">
+      <div class="loading-state" *ngIf="isLoading">
+        <div class="spinner"></div>
+        <p>Cargando producto...</p>
+      </div>
+
+      <div class="error-state" *ngIf="!isLoading && !product">
+        <div class="error-icon">❌</div>
+        <h3>Producto no encontrado</h3>
+        <p>El producto que buscas no existe o ha sido eliminado.</p>
+        <button class="btn-primary" (click)="goBack()">
+          <span class="icon">←</span>
+          Volver al listado
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</div>
