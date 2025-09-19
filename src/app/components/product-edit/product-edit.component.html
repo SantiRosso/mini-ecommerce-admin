@@ -1,0 +1,271 @@
+<div class="product-edit-container"></div>
+  <!-- Header -->
+  <div class="edit-header">
+    <nav class="breadcrumbs">
+      <a routerLink="/" class="breadcrumb-link">
+        <span class="icon">🏠</span>
+        Dashboard
+      </a>
+      <span class="breadcrumb-separator">/</span>
+      <a routerLink="/products" class="breadcrumb-link">
+        <span class="icon">📦</span>
+        Productos
+      </a>
+      <span class="breadcrumb-separator">/</span>
+      <span class="breadcrumb-current">Editar Producto</span>
+      <span class="breadcrumb-separator" *ngIf="currentProduct">/</span>
+      <span class="breadcrumb-current" *ngIf="currentProduct">#{{ currentProduct.id }}</span>
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-secondary" (click)="goBack()">
+        <span class="icon">←</span>
+        Cancelar
+      </button>
+      <button class="btn-info" (click)="viewProductDetail()" *ngIf="currentProduct">
+        <span class="icon">👁️</span>
+        Ver Detalle
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <div class="loading-spinner"></div>
+    <p>Cargando producto...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-container" *ngIf="loadError">
+    <div class="error-icon">⚠️</div>
+    <h2>Error al cargar el producto</h2>
+    <p>{{ loadError }}</p>
+    <div class="error-actions">
+      <button class="btn-primary" (click)="loadProduct()">
+        <span class="icon">🔄</span>
+        Reintentar
+      </button>
+      <button class="btn-secondary" (click)="goBack()">
+        <span class="icon">←</span>
+        Volver
+      </button>
+    </div>
+  </div>
+
+  <!-- Formulario Principal -->
+  <div class="form-container" *ngIf="!isLoading && !loadError && currentProduct">
+    <div class="form-card">
+      <div class="card-header">
+        <h1 class="form-title">
+          <span class="icon">✏️</span>
+          Editar Producto
+        </h1>
+        <p class="form-subtitle">Modifica la información del producto "{{ currentProduct.name }}"</p>
+      </div>
+
+      <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="product-form">
+        <!-- Información del Producto Original -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <span class="icon">📋</span>
+            Información Actual
+          </h3>
+
+          <div class="current-info">
+            <div class="info-card">
+              <div class="info-row">
+                <strong>ID:</strong>
+                <span>#{{ currentProduct.id }}</span>
+              </div>
+              <div class="info-row">
+                <strong>Nombre actual:</strong>
+                <span>{{ currentProduct.name }}</span>
+              </div>
+              <div class="info-row">
+                <strong>Precio actual:</strong>
+                <span>\${{ currentProduct.price | number:'1.2-2' }}</span>
+              </div>
+              <div class="info-row">
+                <strong>Fecha de creación:</strong>
+                <span>{{ formatDateTime(currentProduct.createdAt) }}</span>
+              </div>
+              <div class="info-row">
+                <strong>Última actualización:</strong>
+                <span>{{ formatDateTime(currentProduct.updatedAt) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Información Nueva -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <span class="icon">✨</span>
+            Nueva Información
+          </h3>
+
+          <!-- Nombre del Producto -->
+          <div class="form-group">
+            <label for="name" class="form-label">
+              Nombre del Producto *
+            </label>
+            <input
+              type="text"
+              id="name"
+              formControlName="name"
+              class="form-input"
+              [class.error]="isFieldInvalid('name')"
+              [class.changed]="hasFieldChanged('name')"
+              placeholder="Ej: iPhone 15 Pro Max"
+              maxlength="100">
+
+            <div class="field-info">
+              <span class="char-count">{{ getFieldValue('name')?.length || 0 }}/100 caracteres</span>
+              <span class="change-indicator" *ngIf="hasFieldChanged('name')">• Modificado</span>
+            </div>
+
+            <div class="error-message" *ngIf="isFieldInvalid('name')">
+              <span class="error-icon">⚠️</span>
+              <span *ngIf="productForm.get('name')?.errors?.['required']">
+                El nombre del producto es obligatorio
+              </span>
+              <span *ngIf="productForm.get('name')?.errors?.['minlength']">
+                El nombre debe tener al menos 2 caracteres
+              </span>
+              <span *ngIf="productForm.get('name')?.errors?.['maxlength']">
+                El nombre no puede exceder los 100 caracteres
+              </span>
+            </div>
+          </div>
+
+          <!-- Precio -->
+          <div class="form-group">
+            <label for="price" class="form-label">
+              Precio *
+            </label>
+            <div class="price-input-container">
+              <span class="currency-symbol">$</span>
+              <input
+                type="number"
+                id="price"
+                formControlName="price"
+                class="form-input price-input"
+                [class.error]="isFieldInvalid('price')"
+                [class.changed]="hasFieldChanged('price')"
+                placeholder="0.00"
+                min="0"
+                step="0.01">
+            </div>
+
+            <div class="field-info">
+              <span class="price-preview" *ngIf="getFieldValue('price')">
+                Precio: \${{ formatPrice(getFieldValue('price')) }}
+              </span>
+              <span class="change-indicator" *ngIf="hasFieldChanged('price')">• Modificado</span>
+            </div>
+
+            <div class="error-message" *ngIf="isFieldInvalid('price')">
+              <span class="error-icon">⚠️</span>
+              <span *ngIf="productForm.get('price')?.errors?.['required']">
+                El precio es obligatorio
+              </span>
+              <span *ngIf="productForm.get('price')?.errors?.['min']">
+                El precio debe ser mayor a $0
+              </span>
+              <span *ngIf="productForm.get('price')?.errors?.['max']">
+                El precio no puede exceder $999,999.99
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comparación del Producto -->
+        <div class="form-section" *ngIf="hasAnyChanges()">
+          <h3 class="section-title">
+            <span class="icon">🔄</span>
+            Vista Previa de Cambios
+          </h3>
+
+          <div class="comparison-container">
+            <div class="comparison-card before">
+              <h4>Antes</h4>
+              <div class="preview-content">
+                <div class="preview-name">{{ currentProduct.name }}</div>
+                <div class="preview-price">\${{ currentProduct.price | number:'1.2-2' }}</div>
+              </div>
+            </div>
+
+            <div class="comparison-arrow">→</div>
+
+            <div class="comparison-card after">
+              <h4>Después</h4>
+              <div class="preview-content">
+                <div class="preview-name">{{ getFieldValue('name') || currentProduct.name }}</div>
+                <div class="preview-price">\${{ formatPrice(getFieldValue('price') || currentProduct.price) }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="form-actions">
+          <button
+            type="button"
+            class="btn-secondary"
+            (click)="resetForm()"
+            [disabled]="isSubmitting">
+            <span class="icon">🔄</span>
+            Restablecer
+          </button>
+
+          <button
+            type="submit"
+            class="btn-primary"
+            [disabled]="productForm.invalid || isSubmitting || !hasAnyChanges()">
+            <span class="icon" *ngIf="!isSubmitting">💾</span>
+            <span class="spinner" *ngIf="isSubmitting"></span>
+            {{ isSubmitting ? 'Guardando...' : 'Guardar Cambios' }}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Panel de Información -->
+    <div class="info-panel">
+      <h3 class="info-title">
+        <span class="icon">💡</span>
+        Información de Edición
+      </h3>
+
+      <div class="info-content">
+        <div class="info-tip">
+          <span class="tip-icon">✏️</span>
+          <div class="tip-text">
+            <strong>Edición:</strong> Solo se actualizarán los campos que hayas modificado.
+          </div>
+        </div>
+
+        <div class="info-tip">
+          <span class="tip-icon">💾</span>
+          <div class="tip-text">
+            <strong>Guardado:</strong> Los cambios se guardarán inmediatamente al hacer clic en "Guardar Cambios".
+          </div>
+        </div>
+
+        <div class="info-tip">
+          <span class="tip-icon">🔍</span>
+          <div class="tip-text">
+            <strong>Vista previa:</strong> Puedes ver cómo quedará el producto antes de guardar los cambios.
+          </div>
+        </div>
+
+        <div class="info-tip" *ngIf="!hasAnyChanges()">
+          <span class="tip-icon">⚡</span>
+          <div class="tip-text">
+            <strong>Sin cambios:</strong> Modifica algún campo para habilitar el botón de guardar.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
