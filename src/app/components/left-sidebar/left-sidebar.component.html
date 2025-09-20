@@ -1,0 +1,76 @@
+<aside class="sidebar">
+  <!-- Logo/Brand Section -->
+  <div class="sidebar-header">
+    <div class="brand">
+      <div class="brand-icon">🛒</div>
+      <div class="brand-text">
+        <h2 class="brand-title">Mini E-commerce</h2>
+        <span class="brand-subtitle">Admin Dashboard</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Menu -->
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <span class="nav-section-title">PRINCIPAL</span>
+      <ul class="nav-menu">
+        <li class="nav-item" *ngFor="let item of menuItems">
+          <a
+            [routerLink]="item.path"
+            class="nav-link"
+            [class.active]="item.active"
+            [class.disabled]="item.disabled"
+            (click)="onMenuItemClick(item)">
+
+            <span class="nav-icon">{{ item.icon }}</span>
+            <span class="nav-label">{{ item.label }}</span>
+
+            <!-- Badge for notifications or counts -->
+            <span class="nav-badge" *ngIf="item.badge">{{ item.badge }}</span>
+
+            <!-- Coming soon indicator -->
+            <span class="coming-soon" *ngIf="item.disabled">Próximamente</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Additional Section for Future Features -->
+    <div class="nav-section">
+      <span class="nav-section-title">CONFIGURACIÓN</span>
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a class="nav-link disabled">
+            <span class="nav-icon">⚙️</span>
+            <span class="nav-label">Configuración</span>
+            <span class="coming-soon">Próximamente</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">Reportes</span>
+            <span class="coming-soon">Próximamente</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Footer Section -->
+  <div class="sidebar-footer">
+    <div class="footer-content">
+      <div class="user-info">
+        <div class="user-avatar">👤</div>
+        <div class="user-details">
+          <span class="user-name">Administrador</span>
+          <span class="user-role">Admin</span>
+        </div>
+      </div>
+      <button class="logout-btn" title="Cerrar sesión">
+        <span class="icon">🚪</span>
+      </button>
+    </div>
+  </div>
+</aside>
