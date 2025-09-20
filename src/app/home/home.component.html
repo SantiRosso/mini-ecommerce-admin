@@ -1,0 +1,149 @@
+<div class="home-container">
+  <!-- Welcome Header -->
+  <div class="welcome-section">
+    <div class="welcome-content">
+      <h1 class="welcome-title">
+        <span class="welcome-icon">👋</span>
+        ¡Bienvenido al Dashboard de Administración!
+      </h1>
+      <p class="welcome-subtitle">
+        Gestiona tu tienda de manera eficiente desde un solo lugar
+      </p>
+    </div>
+    <div class="welcome-actions">
+      <button class="btn-primary" routerLink="/products/create">
+        <span class="icon">➕</span>
+        Crear Producto
+      </button>
+      <button class="btn-secondary" routerLink="/products">
+        <span class="icon">📦</span>
+        Ver Productos
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats Overview -->
+  <div class="stats-section">
+    <h2 class="section-title">
+      <span class="icon">📊</span>
+      Resumen General
+    </h2>
+
+    <div class="stats-grid">
+      <div class="stat-card products">
+        <div class="stat-icon">📦</div>
+        <div class="stat-content">
+          <h3 class="stat-number">{{ totalProducts }}</h3>
+          <p class="stat-label">Total Productos</p>
+          <a routerLink="/products" class="stat-link">Ver todos →</a>
+        </div>
+      </div>
+
+      <div class="stat-card revenue">
+        <div class="stat-icon">💰</div>
+        <div class="stat-content">
+          <h3 class="stat-number">${{ totalValue | number:'1.2-2' }}</h3>
+          <p class="stat-label">Valor Total Inventario</p>
+          <span class="stat-link">En productos</span>
+        </div>
+      </div>
+
+      <div class="stat-card average">
+        <div class="stat-icon">📈</div>
+        <div class="stat-content">
+          <h3 class="stat-number">${{ averagePrice | number:'1.2-2' }}</h3>
+          <p class="stat-label">Precio Promedio</p>
+          <span class="stat-link">Por producto</span>
+        </div>
+      </div>
+
+      <div class="stat-card users">
+        <div class="stat-icon">👥</div>
+        <div class="stat-content">
+          <h3 class="stat-number">{{ totalUsers }}</h3>
+          <p class="stat-label">Usuarios</p>
+          <a routerLink="/users" class="stat-link">Ver todos →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="actions-section">
+    <h2 class="section-title">
+      <span class="icon">⚡</span>
+      Acciones Rápidas
+    </h2>
+
+    <div class="actions-grid">
+      <div class="action-card" routerLink="/products/create">
+        <div class="action-icon">➕</div>
+        <div class="action-content">
+          <h3>Crear Producto</h3>
+          <p>Agrega un nuevo producto al inventario</p>
+        </div>
+        <div class="action-arrow">→</div>
+      </div>
+
+      <div class="action-card" routerLink="/products">
+        <div class="action-icon">📋</div>
+        <div class="action-content">
+          <h3>Gestionar Productos</h3>
+          <p>Ver, editar y eliminar productos existentes</p>
+        </div>
+        <div class="action-arrow">→</div>
+      </div>
+
+      <div class="action-card" routerLink="/users">
+        <div class="action-icon">👥</div>
+        <div class="action-content">
+          <h3>Gestionar Usuarios</h3>
+          <p>Administrar cuentas y permisos de usuario</p>
+        </div>
+        <div class="action-arrow">→</div>
+      </div>
+
+      <div class="action-card disabled">
+        <div class="action-icon">📊</div>
+        <div class="action-content">
+          <h3>Ver Reportes</h3>
+          <p>Analizar ventas y rendimiento del negocio</p>
+        </div>
+        <div class="action-arrow">→</div>
+        <div class="coming-soon-badge">Próximamente</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="activity-section" *ngIf="recentProducts.length > 0">
+    <h2 class="section-title">
+      <span class="icon">🕒</span>
+      Productos Recientes
+    </h2>
+
+    <div class="recent-products">
+      <div class="product-item" *ngFor="let product of recentProducts">
+        <div class="product-icon">📦</div>
+        <div class="product-info">
+          <h4>{{ product.name }}</h4>
+          <p>${{ product.price | number:'1.2-2' }}</p>
+        </div>
+        <div class="product-actions">
+          <button class="btn-small" [routerLink]="['/product', product.id]">
+            Ver
+          </button>
+          <button class="btn-small" [routerLink]="['/products/edit', product.id]">
+            Editar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="view-all-products">
+      <button class="btn-outline" routerLink="/products">
+        Ver todos los productos
+      </button>
+    </div>
+  </div>
+</div>
