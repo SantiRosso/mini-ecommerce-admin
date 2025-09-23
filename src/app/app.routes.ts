@@ -7,32 +7,17 @@ import { ProductEditComponent } from './components/product-edit/product-edit.com
 import { UserListComponent } from './components/user-list/user-list.component';
 
 export const routes: Routes = [
-  {
-    path: '',
-    component: HomeComponent
-  },
-  {
-    path: 'products',
-    component: ProductListComponent
-  },
-  {
-    path: 'products/create',
-    component: ProductCreateComponent
-  },
+  { path: '', component: HomeComponent },
+  { path: 'products', component: ProductListComponent },
+  { path: 'products/create', component: ProductCreateComponent },
   {
     path: 'products/edit/:id',
     component: ProductEditComponent
   },
   {
-    path: 'product/:id',
+    path: 'products/:id',
     component: ProductDetailComponent
   },
-  {
-    path: 'users',
-    component: UserListComponent
-  },
-  {
-    path: '**',
-    redirectTo: ''
-  }
+  { path: 'users', component: UserListComponent },
+  { path: '**', redirectTo: '' }
 ];
